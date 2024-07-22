@@ -16,6 +16,7 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
 SECRET_KEY = os.getenv(
     "SECRET_KEY",
     default="django-insecure-h-h69cr05lmc*w4vtkf+5qltg8#&#xf8fe(v9j9oxs-*-^#vjd",
@@ -34,6 +35,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "core",
+    "api",
 ]
 
 MIDDLEWARE = [
@@ -66,16 +68,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "app.wsgi.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "liberty-db",
-        "HOST": os.getenv("DB_HOST", default="localhost"),
-        "PORT": os.getenv("DB_PORT", default=5632),
-        "USER": os.getenv("DB_USER", default="pay360"),
-        "PASSWORD": os.getenv("DB_PASSWORD"),
-        "OPTIONS": {},
+if not DEBUG:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": "liberty-db",
+            "HOST": os.getenv("DB_HOST", default="localhost"),
+            "PORT": os.getenv("DB_PORT", default=5632),
+            "USER": os.getenv("DB_USER", default="pay360"),
+            "PASSWORD": os.getenv("DB_PASSWORD"),
+            "OPTIONS": {},
+            "ATOMIC_REQUESTS": True,
+        }
     }
+DATABASES = {
+    "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": "liberty-commerce-db"}
 }
 
 
@@ -102,8 +109,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_ROOT = BASE_DIR.joinpath("staticfiles")
-STATIC_URL = BASE_DIR.joinpath("static/")
+STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
