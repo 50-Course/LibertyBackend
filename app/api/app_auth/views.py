@@ -1,5 +1,6 @@
 import logging
 
+from api.app_auth.serializers import AuthSerializer, UserSerializer
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -7,8 +8,6 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-
-from app.api.app_auth.serializers import AuthSerializer, UserSerializer
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -23,7 +22,7 @@ class LoginView(APIView):
         """
         Endpoint to authenticate a user
         """
-        serializer = AuthSerializer(request.data)
+        serializer = AuthSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         # Perform authentication
@@ -60,7 +59,7 @@ class SignUpView(APIView):
         """
         Endpoint to register a user account
         """
-        serializer = UserSerializer(request.data)
+        serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
 
