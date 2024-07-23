@@ -22,9 +22,9 @@ SECRET_KEY = os.getenv(
     default="django-insecure-h-h69cr05lmc*w4vtkf+5qltg8#&#xf8fe(v9j9oxs-*-^#vjd",
 )
 
-DEBUG = True
+DEBUG = os.getenv("DEBUG", default=True)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 INSTALLED_APPS = [
@@ -76,7 +76,7 @@ if not DEBUG:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": "liberty-db",
+            "NAME": os.getenv("DB_NAME", default="liberty-db"),
             "HOST": os.getenv("DB_HOST", default="localhost"),
             "PORT": os.getenv("DB_PORT", default=5632),
             "USER": os.getenv("DB_USER", default="pay360"),
