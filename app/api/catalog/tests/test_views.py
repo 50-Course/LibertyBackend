@@ -3,9 +3,10 @@ import pytest
 from core.models import Product
 from django.contrib.auth.models import User
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
-from .factories import ProductFactory, UserFactory
+from .factories import OrderFactory, OrderItemFactory, ProductFactory, UserFactory
 
 
 @pytest.fixture
@@ -21,6 +22,19 @@ def user():
 @pytest.fixture
 def product():
     return ProductFactory()
+
+
+@pytest.fixture
+def products():
+    return ProductFactory.create_batch(5)
+
+
+@pytest.fixture
+def auth_client(user):
+    client = APIClient()
+    token, created = Token.objects.get_or_create(user=user)
+    client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
+    return client
 
 
 @pytest.mark.django_db
@@ -90,3 +104,32 @@ def test_delete_product_authenticated(api_client, user, product):
     response = api_client.delete(f"/api/products/{product.id}/")
     assert response.status_code == status.HTTP_204_NO_CONTENT
     api_client.logout()
+
+
+def test_create_order(auth_client, products):
+    url = reverse("order-list")
+    product_ids = [product.id for product in products]
+    quantities = [1, 2, 3, 4, 5]
+    data = {"product_ids": product_ids, "quantities": quantities}
+    response = auth_client.post(url, data, format="json")
+    assert response.status_code == 201
+    assert Order.objects.count() == 1
+    assert Order.objects.first().orderitem_set.count() == 5
+
+
+def test_get_order_history(auth_client):
+    order = OrderFactory(user=auth_client.user)
+    OrderItemFactory.create_batch(3, order=order)
+    url = reverse("order-list")
+    response = auth_client.get(url)
+    assert response.status_code == 200
+    assert len(response.data) == 1
+    assert len(response.data[0]["items"]) == 3
+
+
+def test_get_product_list(api_client):
+    ProductFactory.create_batch(5)
+    url = reverse("product-list")
+    response = api_client.get(url)
+    assert response.status_code == 200
+    assert len(response.data) == 5
