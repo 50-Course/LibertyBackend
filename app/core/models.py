@@ -86,3 +86,19 @@ class Category(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+
+class Order(models.Model):
+    """
+    An order taken by a customer
+    """
+
+    value = models.IntegerField(
+        help_text="Numerical amount of products ordered by the customer",
+    )
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="ordered_products"
+    )
+
+    def __str__(self):
+        return f"{self.__class__.__name__} - #{self.value}"
