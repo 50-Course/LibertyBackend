@@ -93,12 +93,20 @@ class Order(models.Model):
     An order taken by a customer
     """
 
-    value = models.IntegerField(
-        help_text="Numerical amount of products ordered by the customer",
-    )
-    product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, related_name="ordered_products"
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    products = models.ManyToManyField(Product, through="OrderItem")
+    # helps us to track to track the date an order was bought
+    date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.__class__.__name__} - #{self.value}"
+        return f"Order #{self.id} by {self.user.username}"
+
+
+class OrderItem(models.Model):
+    """
+    Helps to track order history and transactions
+    """
+
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
