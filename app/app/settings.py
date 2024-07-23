@@ -13,16 +13,22 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 from pathlib import Path
 
+import environ
+
+env = environ.Env()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
-SECRET_KEY = os.getenv(
+
+SECRET_KEY = env(
     "SECRET_KEY",
     default="django-insecure-h-h69cr05lmc*w4vtkf+5qltg8#&#xf8fe(v9j9oxs-*-^#vjd",
 )
 
-DEBUG = os.getenv("DEBUG", default=True)
+DEBUG = env("DEBUG", default=True)
 
 ALLOWED_HOSTS = ["*"]
 
@@ -76,11 +82,11 @@ if not DEBUG:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.getenv("DB_NAME", default="liberty-db"),
-            "HOST": os.getenv("DB_HOST", default="localhost"),
-            "PORT": os.getenv("DB_PORT", default=5632),
-            "USER": os.getenv("DB_USER", default="pay360"),
-            "PASSWORD": os.getenv("DB_PASSWORD"),
+            "NAME": env("DB_NAME", default="liberty-db"),
+            "HOST": env("DB_HOST", default="localhost"),
+            "PORT": env("DB_PORT", default=5632),
+            "USER": env("DB_USER", default="pay360"),
+            "PASSWORD": env("DB_PASSWORD"),
             "OPTIONS": {},
             "ATOMIC_REQUESTS": True,
         }
