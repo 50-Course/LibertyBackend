@@ -1,7 +1,7 @@
 import factory
-import Faker
 from core.models import Order, OrderItem, Product
 from django.contrib.auth import get_user_model
+from faker import Faker
 
 fake = Faker()
 
