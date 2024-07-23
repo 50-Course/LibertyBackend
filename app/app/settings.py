@@ -84,7 +84,7 @@ if not DEBUG:
             "ENGINE": "django.db.backends.postgresql",
             "NAME": env("DB_NAME", default="liberty-db"),
             "HOST": env("DB_HOST", default="localhost"),
-            "PORT": env("DB_PORT", default=5632),
+            "PORT": env("DB_PORT"),
             "USER": env("DB_USER", default="pay360"),
             "PASSWORD": env("DB_PASSWORD"),
             "OPTIONS": {},
